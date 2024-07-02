@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head> </head>
+  <body>
+    <h1>uwu qrcode</h1>
+    <textarea id="input"></textarea>
+    <input type="submit" />
+    <script type="module">
+      import JSZip from "https://cdn.skypack.dev/jszip";
+      import qrcode from "https://cdn.skypack.dev/qrcode";
+      const zip = new JSZip();
+
+      const button = document.querySelector("input");
+      button.addEventListener("click", async () => {
+        const values = document.querySelector("textarea").value.split("\n");
+        const zip = new JSZip();
+        for (const v of values) {
+          const data = (await qrcode.toDataURL(v)).replace(
+            "data:image/png;base64,",
+            ""
+          );
+          const filename = v.replaceAll(/[^a-zA-Z0-9]/gm, "") + ".png";
+          zip.file(filename, data, { base64: true });
+        }
+        const file = await zip.generateAsync({ type: "blob" });
+        window.open(window.URL.createObjectURL(file));
+      });
+    </script>
+  </body>
+</html>
